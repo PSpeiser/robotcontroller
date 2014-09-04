@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script>
+        Number.prototype.clamp = function(min, max) {
+  return Math.min(Math.max(this, min), max);
+};
+        function init() {
+            mouseVector = [0, 0];
+            mousePos = [0, 0];
+            mouseOrigin = [0, 0];
+            mouseIsDown = false;
+            var canvas = document.getElementById("c");
+            canvas.addEventListener("mousedown", mouseDown, false);
+            canvas.addEventListener("mousemove", mouseXY, false);
+            document.body.addEventListener("mouseup", mouseUp, false);
+        }
+
+        function sendMotorVector()
+        {
+            calculateMotorVector();
+            var xhr = new XMLHttpRequest();
+            var params = "x=" + motorVector[0] + "&y=" + motorVector[1];
+            xhr.open("POST","motor_vector")
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.send(params)
+
+        }
+
+        function calculateMotorVector()
+        {
+            motorVector = [0,0];
+            motorVector[0] = (mouseVector[0] / 640 * 4).clamp(-1,1).toFixed(2);
+            motorVector[1] = (-mouseVector[1] / 480 * 4).clamp(-1,1).toFixed(2);
+            console.log(motorVector)
+        }
+
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        function mouseDown(e) {
+            mouseIsDown = true;
+            mouseOrigin = [e.x, e.y];
+            mousePos = [e.x , e.y];
+        }
+        function mouseXY(e) {
+            if (!e)
+                var e = event;
+            e.preventDefault();
+            if (mouseIsDown) {
+                mousePos = [e.x, e.y];
+                mouseVector = [mousePos[0] - mouseOrigin[0], mousePos[1] - mouseOrigin[1]];
+            }
+        }
+        function mouseUp() {
+            mouseIsDown = false;
+            mouseOrigin = [0, 0];
+            mousePos = [0, 0];
+            mouseVector = [0, 0];
+        }
+        function draw() {
+            var canvas = document.getElementById("c");
+            var context = canvas.getContext("2d");
+
+            var img = new Image();
+            img.src = "cam.jpg"
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+
+            context.beginPath();
+            context.moveTo(mouseOrigin[0], mouseOrigin[1]);
+            context.lineTo(mousePos[0], mousePos[1]);
+            context.stroke();
+        }
+        ;
+    </script>
+</head>
+<body>
+<canvas id="c" width="640" height="480"></canvas>
+<script>
+    init();
+    draw();
+    window.setInterval(draw, 100);
+    window.setInterval(sendMotorVector,100);
+</script>
+</body>
+
+</html>
