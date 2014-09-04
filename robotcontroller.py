@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, send_file
 import io
 import picamera
+
 app = Flask(__name__)
 teensy = None
 camera = None
+
 
 @app.route('/')
 def hello_world():
@@ -15,7 +17,9 @@ def cam_jpg():
     img = io.BytesIO()
     camera.capture(img, 'jpeg')
     img.seek(0)
-    return send_file(img, attachment_filename='cam.jpg', mimetype='image/jpeg')
+    response = send_file(img, attachment_filename='cam.jpg', mimetype='image/jpeg')
+    img.close()
+    return response
 
 
 @app.route('/motor_vector', methods=["POST"])
@@ -32,6 +36,7 @@ class Teensy():
     def __init__(self):
         print "Connecting to Teensy..."
         import serial
+
         self.serial = None
         return None
         while not self.serial:
@@ -57,10 +62,11 @@ def calculate_motor_powers(vector):
                     'BR': round(max(-1.0, min(1.0, vector[1] - vector[0])), 2)}
     return motor_powers
 
+
 if __name__ == '__main__':
     teensy = Teensy()
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     camera.rotation = 180
-    camera.start_preview()
+    camera.framerate = 60
     app.run(host="0.0.0.0")
