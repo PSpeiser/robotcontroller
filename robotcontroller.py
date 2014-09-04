@@ -61,4 +61,5 @@ if __name__ == '__main__':
     camera = picamera.PiCamera()
     camera.resolution = (640, 480)
     camera.rotation = 180
+    camera.start_preview()
     app.run(host="0.0.0.0")
