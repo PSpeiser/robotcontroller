@@ -22,7 +22,6 @@ class Teensy():
     def __init__(self):
         print "Connecting to Teensy..."
         import serial
-
         self.serial = None
         while not self.serial:
             try:
@@ -34,7 +33,6 @@ class Teensy():
                 pass
 
     def send_motor_powers(self, motor_powers):
-        print motor_powers
         for key, value in motor_powers.items():
             self.serial.write("{0}{1}\r\n".format(key, value))
 
