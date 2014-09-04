@@ -24,7 +24,6 @@
             xhr.open("POST", "motor_vector")
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.send(params)
-
         }
 
         function calculateMotorVector() {
@@ -74,9 +73,12 @@
                 context.lineTo(mousePos[0], mousePos[1]);
                 context.stroke();
             }
-
-
         }
+        function update()
+        {
+            sendMotorVector();
+        }
+
     </script>
 </head>
 <body>
@@ -84,6 +86,7 @@
 <script>
     init();
     window.setInterval(draw, 50);
+    window.setInterval(update,50);
 </script>
 </body>
 
