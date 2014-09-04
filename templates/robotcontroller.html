@@ -3,9 +3,9 @@
 <head>
     <title></title>
     <script>
-        Number.prototype.clamp = function(min, max) {
-  return Math.min(Math.max(this, min), max);
-};
+        Number.prototype.clamp = function (min, max) {
+            return Math.min(Math.max(this, min), max);
+        };
         function init() {
             mouseVector = [0, 0];
             mousePos = [0, 0];
@@ -17,22 +17,20 @@
             document.body.addEventListener("mouseup", mouseUp, false);
         }
 
-        function sendMotorVector()
-        {
+        function sendMotorVector() {
             calculateMotorVector();
             var xhr = new XMLHttpRequest();
             var params = "x=" + motorVector[0] + "&y=" + motorVector[1];
-            xhr.open("POST","motor_vector")
+            xhr.open("POST", "motor_vector")
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.send(params)
 
         }
 
-        function calculateMotorVector()
-        {
-            motorVector = [0,0];
-            motorVector[0] = (mouseVector[0] / 640 * 4).clamp(-1,1).toFixed(2);
-            motorVector[1] = (-mouseVector[1] / 480 * 4).clamp(-1,1).toFixed(2);
+        function calculateMotorVector() {
+            motorVector = [0, 0];
+            motorVector[0] = (mouseVector[0] / 640 * 4).clamp(-1, 1).toFixed(2);
+            motorVector[1] = (-mouseVector[1] / 480 * 4).clamp(-1, 1).toFixed(2);
             console.log(motorVector)
         }
 
@@ -70,13 +68,18 @@
             var img = new Image();
             img.src = "cam.jpg?" + new Date().getTime();
             context.drawImage(img, 0, 0, canvas.width, canvas.height);
+            img.onload = function () {
+                context.beginPath();
+                context.moveTo(mouseOrigin[0], mouseOrigin[1]);
+                context.lineTo(mousePos[0], mousePos[1]);
+                context.stroke();
+                window.setTimeout(draw, 100);
+            }
 
 
-            context.beginPath();
-            context.moveTo(mouseOrigin[0], mouseOrigin[1]);
-            context.lineTo(mousePos[0], mousePos[1]);
-            context.stroke();
-            window.setTimeout(draw,100);
+        }
+        function drawImage() {
+
         }
 
     </script>
