@@ -1,24 +1,12 @@
 from flask import Flask, render_template, request, send_file
 import io
-import picamera
 
 app = Flask(__name__)
 teensy = None
-camera = None
-
 
 @app.route('/')
 def hello_world():
     return render_template('robotcontroller.html')
-
-
-@app.route('/cam.jpg')
-def cam_jpg():
-    img = io.BytesIO()
-    camera.capture(img, 'jpeg')
-    img.seek(0)
-    return send_file(img, attachment_filename='cam.jpg', mimetype='image/jpeg')
-
 
 @app.route('/motor_vector', methods=["POST"])
 def motor_vector():
@@ -61,8 +49,4 @@ def calculate_motor_powers(vector):
 
 if __name__ == '__main__':
     teensy = Teensy()
-    camera = picamera.PiCamera()
-    camera.resolution = (640, 480)
-    camera.rotation = 180
-    camera.framerate = 60
     app.run(host="0.0.0.0")
