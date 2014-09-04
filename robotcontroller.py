@@ -17,9 +17,7 @@ def cam_jpg():
     img = io.BytesIO()
     camera.capture(img, 'jpeg')
     img.seek(0)
-    response = send_file(img, attachment_filename='cam.jpg', mimetype='image/jpeg')
-    img.close()
-    return response
+    return send_file(img, attachment_filename='cam.jpg', mimetype='image/jpeg')
 
 
 @app.route('/motor_vector', methods=["POST"])
