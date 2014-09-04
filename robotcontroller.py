@@ -14,6 +14,7 @@ def hello_world():
 def cam_jpg():
     img = io.BytesIO()
     camera.capture(img, 'jpeg')
+    img.seek(0)
     return send_file(img, attachment_filename='cam.jpg', mimetype='image/jpeg')
 
 
