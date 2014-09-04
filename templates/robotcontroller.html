@@ -68,7 +68,7 @@
             var context = canvas.getContext("2d");
 
             var img = new Image();
-            img.src = "cam.jpg"
+            img.src = "cam.jpg?" + new Date().getTime();"
             context.drawImage(img, 0, 0, canvas.width, canvas.height);
 
 
