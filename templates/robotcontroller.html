@@ -68,7 +68,7 @@
             var context = canvas.getContext("2d");
 
             var img = new Image();
-            img.src = "cam.jpg?" + new Date().getTime();"
+            img.src = "cam.jpg?" + new Date().getTime();
             context.drawImage(img, 0, 0, canvas.width, canvas.height);
 
 
@@ -76,8 +76,9 @@
             context.moveTo(mouseOrigin[0], mouseOrigin[1]);
             context.lineTo(mousePos[0], mousePos[1]);
             context.stroke();
+            draw();
         }
-        ;
+
     </script>
 </head>
 <body>
@@ -85,8 +86,6 @@
 <script>
     init();
     draw();
-    window.setInterval(draw, 100);
-    window.setInterval(sendMotorVector,100);
 </script>
 </body>
 
