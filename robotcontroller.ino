@@ -15,7 +15,7 @@ int BLB = 13;
 int BLE = 12;
 
 
-const int MINDUTYCYCLE = 100;
+const int MINDUTYCYCLE = 200;
 const int MAXDUTYCYCLE = 255;
 
 const int FL = 0;
