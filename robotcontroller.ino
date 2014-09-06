@@ -2,17 +2,17 @@ int FLA = 8;
 int FLB = 9;
 int FLE = 10;
 
-int FRA = 5;
-int FRB = 6;
+int FRA = 6;
+int FRB = 5;
 int FRE = 4;
 
-int BRA = 17;
-int BRB = 16;
-int BRE = 15;
+int BLA = 16;
+int BLB = 17;
+int BLE = 15;
 
-int BLA = 14;
-int BLB = 13;
-int BLE = 12;
+int BRA = 14;
+int BRB = 13;
+int BRE = 12;
 
 
 const int MINDUTYCYCLE = 200;
