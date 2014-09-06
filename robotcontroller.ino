@@ -17,8 +17,11 @@ int BLE = 12;
 
 const int MINDUTYCYCLE = 200;
 const int MAXDUTYCYCLE = 255;
-String str;
-char chars[32];
+
+const int FL = 0;
+const int FR = 1;
+const int BL = 2;
+const int BR = 3;
 
 void setup()
 {
