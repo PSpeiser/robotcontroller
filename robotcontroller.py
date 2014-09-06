@@ -3,6 +3,12 @@ import io
 
 app = Flask(__name__)
 teensy = None
+serial_port_string = "/dev/serial/by-id/usb-Teensyduino_USB_Serial_12345-if00"
+
+FL = 0
+FR = 1
+BL = 2
+BR = 3
 
 @app.route('/')
 def hello_world():
@@ -26,22 +32,33 @@ class Teensy():
         while not self.serial:
             try:
                 self.serial = serial.Serial(
-                    port='/dev/serial/by-id/usb-Teensyduino_USB_Serial_12345-if00',
-                    baudrate=9600)
+                    port=serial_port_string,
+                    baudrate=9600,
+                    timeout=0.01)
                 print "Connected to Teensy"
-            except:
+            except Exception as e:
                 pass
+
 
     def send_motor_powers(self, motor_powers):
         for key, value in motor_powers.items():
-            self.serial.write("{0}{1}\r\n".format(key, value))
+            motor_select = key
+            motor_power_int = self.float_to_int(value) + 128
+            self.serial.write(chr(motor_select))
+            self.serial.write(chr(motor_power_int))
+            self.serial.flush()
+
+
+    def float_to_int(self, f):
+        return int(max(min(f * 128, 127), -128))
+
 
 
 def calculate_motor_powers(vector):
-    motor_powers = {'FL': round(max(-1.0, min(1.0, vector[1] + vector[0])), 2),
-                    'FR': round(max(-1.0, min(1.0, vector[1] - vector[0])), 2),
-                    'BL': round(max(-1.0, min(1.0, vector[1] + vector[0])), 2),
-                    'BR': round(max(-1.0, min(1.0, vector[1] - vector[0])), 2)}
+    motor_powers = {FL: round(max(-1.0, min(1.0, vector[1] + vector[0])), 2),
+                    FR: round(max(-1.0, min(1.0, vector[1] - vector[0])), 2),
+                    BL: round(max(-1.0, min(1.0, vector[1] + vector[0])), 2),
+                    BR: round(max(-1.0, min(1.0, vector[1] - vector[0])), 2)}
     return motor_powers
 
 

@@ -15,7 +15,7 @@ int BLB = 13;
 int BLE = 12;
 
 
-const int MINDUTYCYCLE = 200;
+const int MINDUTYCYCLE = 100;
 const int MAXDUTYCYCLE = 255;
 
 const int FL = 0;
@@ -40,40 +40,40 @@ void setup()
   pinMode(BRB,OUTPUT);
   pinMode(BRE,OUTPUT);
 }
-
+int motorSelect = -1;
+int motorPower = -1;
 void loop()
 {
   //IMPORTANT, line endings must be \R\N
   if(Serial.available() > 0)
   {
-    str = Serial.readStringUntil('\n');
-    //Serial.print("Received: ");
-    //Serial.println(str);
-    String motorSelectString = str.substring(0,2);
-    //Serial.print("Selected Motor: ");
-    //Serial.println(motorSelectString);
+    if(motorSelect != -1)
+    {
+      motorPower = Serial.read();
+      motorPower -= 128;
+      float mp = motorPower / 128.0;
+      switch (motorSelect)
+      {  
+        case FL:
+            FLSpin(mp);
+            break;
+        case FR:
+            FRSpin(mp);
+            break;
+        case BL:
+            BLSpin(mp);
+            break;
+        case BR:
+            BRSpin(mp);
+            break;
+      }
+      motorSelect = -1;
+    }
+    else
+    {
+      motorSelect = Serial.read();
+    }
     
-    String powerString = str.substring(2);
-    powerString.toCharArray(chars,powerString.length());
-    float power = atof(chars);
-    //Serial.print("Power: ");
-    //Serial.println(power);
-    if(motorSelectString == "FL")
-    {
-      FLSpin(power);
-    }
-    else if (motorSelectString == "FR")
-    {
-      FRSpin(power);
-    }
-    else if (motorSelectString == "BL")
-    {
-      BLSpin(power); 
-    }
-    else if (motorSelectString == "BR")
-    {
-      BRSpin(power);
-    }
   }
 }
 int getDutyCycle(float power)
