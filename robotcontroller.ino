@@ -15,13 +15,15 @@ int BRB = 13;
 int BRE = 12;
 
 
-const int MINDUTYCYCLE = 200;
+const int MINDUTYCYCLE = 100;
 const int MAXDUTYCYCLE = 255;
 
 const int FL = 0;
 const int FR = 1;
 const int BL = 2;
 const int BR = 3;
+
+unsigned long lastCommandTime = 0;
 
 void setup()
 {
@@ -44,7 +46,11 @@ int motorSelect = -1;
 int motorPower = -1;
 void loop()
 {
-  //IMPORTANT, line endings must be \R\N
+  if (millis() - lastCommandTime > 1000)
+  {
+    StopMotors();
+  }
+  
   if(Serial.available() > 0)
   {
     if(motorSelect != -1)
@@ -68,6 +74,7 @@ void loop()
             break;
       }
       motorSelect = -1;
+      lastCommandTime = millis();
     }
     else
     {
@@ -84,6 +91,13 @@ int getDutyCycle(float power)
     dutyCycle = min(MINDUTYCYCLE + (MAXDUTYCYCLE-MINDUTYCYCLE)*power,MAXDUTYCYCLE);    
   }
   return dutyCycle;
+}
+void StopMotors()
+{
+  FLSpin(0.0);
+  FRSpin(0.0);
+  BLSpin(0.0);
+  BRSpin(0.0);
 }
 void FLSpin(float power)
 {
