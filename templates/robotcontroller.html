@@ -14,7 +14,11 @@
             var canvas = document.getElementById("c");
             canvas.addEventListener("mousedown", mouseDown, false);
             canvas.addEventListener("mousemove", mouseXY, false);
+            canvas.addEventListener("touchstart", touchDown, false);
+            canvas.addEventListener("touchmove", touchXY, true);
+            canvas.addEventListener("touchend", touchUp, false);
             document.body.addEventListener("mouseup", mouseUp, false);
+            document.body.addEventListener("touchcancel", touchUp, false);
         }
 
         function sendMotorVector() {
@@ -43,7 +47,7 @@
         function mouseDown(e) {
             mouseIsDown = true;
             mouseOrigin = [e.x, e.y];
-            mousePos = [e.x , e.y];
+            mouseXY(e);
         }
         function mouseXY(e) {
             if (!e)
@@ -60,9 +64,35 @@
             mousePos = [0, 0];
             mouseVector = [0, 0];
         }
+        function touchDown(e) {
+            mouseIsDown = true;
+            var canvas = document.getElementById("c");
+            canX = e.targetTouches[0].pageX - canvas.offsetLeft;
+            canY = e.targetTouches[0].pageY - canvas.offsetTop;
+            mouseOrigin = [canX, canY];
+            touchXY(e);
+        }
+        function touchXY(e) {
+            if (!e)
+                var e = event;
+            e.preventDefault();
+            var canvas = document.getElementById("c");
+            canX = e.targetTouches[0].pageX - canvas.offsetLeft;
+            canY = e.targetTouches[0].pageY - canvas.offsetTop;
+            mousePos = [canX, canY];
+            mouseVector = [mousePos[0] - mouseOrigin[0], mousePos[1] - mouseOrigin[1]];
+
+        }
+        function touchUp() {
+            mouseIsDown = false;
+            mouseOrigin = [0, 0];
+            mousePos = [0, 0];
+            mouseVector = [0, 0];
+        }
         function draw() {
             var canvas = document.getElementById("c");
             var context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
 
             var img = new Image();
             img.src = "http://" + window.location.hostname + "/cam.jpg?" + new Date().getTime();
@@ -73,9 +103,13 @@
                 context.lineTo(mousePos[0], mousePos[1]);
                 context.stroke();
             }
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+            context.beginPath();
+            context.moveTo(mouseOrigin[0], mouseOrigin[1]);
+            context.lineTo(mousePos[0], mousePos[1]);
+            context.stroke();
         }
-        function update()
-        {
+        function update() {
             sendMotorVector();
         }
 
@@ -86,7 +120,7 @@
 <script>
     init();
     window.setInterval(draw, 50);
-    window.setInterval(update,100);
+    window.setInterval(update, 100);
 </script>
 </body>
 
